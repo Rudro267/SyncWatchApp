@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Awesome Website</title>
+    <style>
+        :root {
+            --main-color: #ffad09;
+            --light-area-color: #faca4c;
+            --dark-area-color: #520903;
+            --secondary-dark-color: #fe7102;
+            --text-color-light: #333;
+            --text-color-dark: #eee;
+            --bg-color-light: #f4f4f4; /* Using a light grey */
+            --bg-color-dark: #1a1a1a; /* Using a very dark grey */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color-light);
+            color: var(--text-color-light);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        body.dark-mode {
+            background-color: var(--bg-color-dark);
+            color: var(--text-color-dark);
+        }
+
+        header {
+            background-color: var(--dark-area-color);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            color: var(--main-color);
+        }
+
+        nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        nav button, nav a {
+            background-color: var(--secondary-dark-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            text-decoration: none; /* For the anchor tag */
+            display: inline-flex; /* For consistent button/link styling */
+            align-items: center;
+            justify-content: center;
+        }
+
+        nav button:hover, nav a:hover {
+            background-color: var(--main-color);
+        }
+
+        main {
+            flex-grow: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 2rem auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* Two columns: 2 parts for main content, 1 part for about */
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--light-area-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.dark-mode .card {
+            background-color: #2b2b2b; /* Slightly lighter than dark body bg */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .card h2 {
+            color: var(--dark-area-color);
+            margin-top: 0;
+            border-bottom: 2px solid var(--main-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        body.dark-mode .card h2 {
+            color: var(--main-color);
+        }
+
+        /* Combined Time and Reminder Card */
+        #time-reminder-card {
+            grid-column: 1 / 2; /* Occupy the first column */
+            display: grid;
+            grid-template-rows: auto 1fr; /* Header and then remaining space for content */
+        }
+
+        #time-reminder-content {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr; /* Time takes 1 part, Reminders 1.5 parts */
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            #time-reminder-content {
+                grid-template-columns: 1fr; /* Stack on smaller screens */
+            }
+        }
+
+        /* Clock styles */
+        #clock-container {
+            font-size: 2.5rem; /* Slightly smaller for combined card */
+            text-align: center;
+            padding: 1rem 0;
+            color: var(--dark-area-color);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        body.dark-mode #clock-container {
+            color: var(--main-color);
+        }
+
+        #clock-time {
+            font-weight: bold;
+            font-size: 3rem; /* Make the time bigger within its container */
+        }
+        #clock-date {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        /* Reminder Styles */
+        #reminders-section {
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* Ensure it fills its space in the grid */
+        }
+        #reminder-form {
+            display: flex;
+            margin-bottom: 1.5rem;
+        }
+        #reminder-input {
+            flex-grow: 1;
+            padding: 0.7rem;
+            border: 1px solid var(--dark-area-color);
+            border-radius: 5px 0 0 5px;
+            font-size: 1rem;
+        }
+        body.dark-mode #reminder-input {
+            background-color: #444;
+            border-color: #666;
+            color: var(--text-color-dark);
+        }
+        #add-reminder-btn {
+            background-color: var(--secondary-dark-color);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        #add-reminder-btn:hover {
+            background-color: var(--main-color);
+        }
+
+        #reminders-list {
+            list-style: none;
+            padding: 0;
+            max-height: 300px; /* Limit height to allow scrolling if many reminders */
+            overflow-y: auto;
+            flex-grow: 1; /* Allow it to take available space */
+        }
+        #reminders-list li {
+            background-color: var(--main-color);
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.5rem;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+            color: var(--dark-area-color);
+            word-break: break-word;
+        }
+        body.dark-mode #reminders-list li {
+            background-color: var(--secondary-dark-color);
+            color: var(--text-color-dark);
+        }
+        #reminders-list li button {
+            background: none;
+            border: none;
+            color: var(--dark-area-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-left: 10px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        body.dark-mode #reminders-list li button {
+            color: var(--text-color-dark);
+        }
+        #reminders-list li button:hover {
+            opacity: 1;
+            color: red;
+        }
+
+        /* About Section (Main Page) */
+        #about-card {
+            grid-column: 2 / 3; /* Occupy the second column */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #about-card h2 {
+             color: var(--dark-area-color);
+        }
+        body.dark-mode #about-card h2 {
+            color: var(--main-color);
+        }
+        #about-card p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Full Screen Clock Styles (remains the same) */
+        #fullscreen-clock-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.95) 0%, rgba(0,0,0,1) 100%);
+            color: white;
+            z-index: 1000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #fullscreen-clock-overlay.active {
+            display: flex;
+        }
+
+        #fullscreen-clock-time {
+            font-family: 'Orbitron', monospace;
+            font-size: 10vw;
+            font-weight: bold;
+            letter-spacing: 0.5vw;
+            color: var(--main-color);
+            text-shadow: 0 0 20px var(--main-color), 0 0 30px var(--main-color);
+            animation: pulse 2s infinite alternate;
+        }
+
+        #fullscreen-clock-date {
+            font-size: 2vw;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite alternate;
+            opacity: 0;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        /* About Page Overlay Styles */
+        #about-page-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color-light); /* Matches main page light theme */
+            color: var(--text-color-light);
+            z-index: 999; /* Below fullscreen clock, above main content */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 2rem;
+        }
+
+        body.dark-mode #about-page-overlay {
+            background-color: var(--bg-color-dark); /* Matches main page dark theme */
+            color: var(--text-color-dark);
+        }
+
+        #about-page-overlay.active {
+            display: flex;
+        }
+
+        #about-page-content {
+            background-color: var(--light-area-color);
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+        body.dark-mode #about-page-content {
+            background-color: #2b2b2b;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        #about-page-content h2 {
+            color: var(--dark-area-color);
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--main-color);
+            padding-bottom: 1rem;
+        }
+        body.dark-mode #about-page-content h2 {
+            color: var(--main-color);
+        }
+
+        #about-page-content p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        #about-page-content a {
+            color: var(--secondary-dark-color);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        #about-page-content a:hover {
+            color: var(--main-color);
+            text-decoration: underline;
+        }
+
+        #close-about-page-btn {
+            background-color: var(--secondary-dark-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 2rem;
+            transition: background-color 0.3s ease;
+        }
+        #close-about-page-btn:hover {
+            background-color: var(--main-color);
+        }
+
+        footer {
+            background-color: var(--dark-area-color);
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: 2rem;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Basic responsiveness */
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr; /* Stack all cards on small screens */
+                padding: 1rem;
+            }
+            #time-reminder-card {
+                grid-column: 1 / -1; /* Full width */
+            }
+            #about-card {
+                grid-column: 1 / -1; /* Full width */
+                margin-top: 2rem; /* Add some space between stacked cards */
+            }
+            #fullscreen-clock-time {
+                font-size: 15vw;
+            }
+            #fullscreen-clock-date {
+                font-size: 3vw;
+            }
+            #about-page-content {
+                padding: 1.5rem;
+            }
+            #about-page-content h2 {
+                font-size: 2rem;
+            }
+            #about-page-content p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+    <!-- Google Fonts for Orbitron (techy clock font) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>My Awesome Website</h1>
+        <nav>
+            <button id="toggle-dark-mode">Dark Mode</button>
+            <button id="toggle-fullscreen-clock">Clock</button>
+            <a href="#" id="show-about-page-btn">About</a> <!-- Changed to anchor for navigation feel -->
+        </nav>
+    </header>
+
+    <main id="main-content">
+        <!-- Combined Time and Reminder Card (Bigger) -->
+        <section class="card" id="time-reminder-card">
+            <h2>Time & Reminders</h2>
+            <div id="time-reminder-content">
+                <div id="clock-container">
+                    <div id="clock-time"></div>
+                    <div id="clock-date"></div>
+                </div>
+                <div id="reminders-section">
+                    <div id="reminder-form">
+                        <input type="text" id="reminder-input" placeholder="Add a new reminder...">
+                        <button id="add-reminder-btn">Add</button>
+                    </div>
+                    <ul id="reminders-list">
+                        <!-- Reminders will be loaded here -->
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Card (on main page, if not navigating to a 'page') -->
+        <section class="card" id="about-card">
+            <h2>About Our Company</h2>
+            <p>We are dedicated to providing innovative solutions and a user-friendly experience.</p>
+            <p>Click "About" in the header to learn more!</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 My Awesome Website. All rights reserved.</p>
+    </footer>
+
+    <!-- Full Screen Clock Overlay -->
+    <div id="fullscreen-clock-overlay">
+        <div id="fullscreen-clock-time"></div>
+        <div id="fullscreen-clock-date"></div>
+    </div>
+
+    <!-- About Page Overlay (simulates a new page) -->
+    <div id="about-page-overlay">
+        <div id="about-page-content">
+            <h2>About Us</h2>
+            <p>Welcome to our company! We strive to deliver excellence in all our services.</p>
+            <p>For inquiries, please reach out to us at:</p>
+            <p><a href="mailto:rudroa267@gmail.com">rudroa267@gmail.com</a></p>
+            <p>Thank you for your interest!</p>
+            <button id="close-about-page-btn">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const body = document.body;
+        const toggleDarkModeBtn = document.getElementById('toggle-dark-mode');
+        const toggleFullscreenClockBtn = document.getElementById('toggle-fullscreen-clock');
+        const clockTimeDiv = document.getElementById('clock-time');
+        const clockDateDiv = document.getElementById('clock-date');
+        const fullscreenClockOverlay = document.getElementById('fullscreen-clock-overlay');
+        const fullscreenClockTimeDiv = document.getElementById('fullscreen-clock-time');
+        const fullscreenClockDateDiv = document.getElementById('fullscreen-clock-date');
+
+        const reminderInput = document.getElementById('reminder-input');
+        const addReminderBtn = document.getElementById('add-reminder-btn');
+        const remindersList = document.getElementById('reminders-list');
+
+        const showAboutPageBtn = document.getElementById('show-about-page-btn');
+        const aboutPageOverlay = document.getElementById('about-page-overlay');
+        const closeAboutPageBtn = document.getElementById('close-about-page-btn');
+        const mainContent = document.getElementById('main-content'); // Reference to the main content area
+
+        // --- Dark Mode Functionality ---
+        const DARK_MODE_KEY = 'darkModeEnabled';
+
+        function setDarkMode(isEnabled) {
+            if (isEnabled) {
+                body.classList.add('dark-mode');
+                toggleDarkModeBtn.textContent = 'Light Mode';
+            } else {
+                body.classList.remove('dark-mode');
+                toggleDarkModeBtn.textContent = 'Dark Mode';
+            }
+            localStorage.setItem(DARK_MODE_KEY, isEnabled);
+        }
+
+        const savedDarkMode = localStorage.getItem(DARK_MODE_KEY);
+        if (savedDarkMode !== null) {
+            setDarkMode(savedDarkMode === 'true');
+        } else {
+            setDarkMode(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        }
+
+        toggleDarkModeBtn.addEventListener('click', () => {
+            setDarkMode(!body.classList.contains('dark-mode'));
+        });
+
+        // --- Clock Functionality ---
+        function updateClock() {
+            const now = new Date();
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }; // Added hour12
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+            const currentTime = now.toLocaleTimeString(undefined, timeOptions);
+            const currentDate = now.toLocaleDateString(undefined, dateOptions);
+
+            clockTimeDiv.textContent = currentTime;
+            clockDateDiv.textContent = currentDate;
+
+            if (fullscreenClockOverlay.classList.contains('active')) {
+                fullscreenClockTimeDiv.textContent = currentTime;
+                fullscreenClockDateDiv.textContent = currentDate;
+            }
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- Full Screen Clock Functionality ---
+        let starsGenerated = false;
+
+        function generateStars() {
+            if (starsGenerated) return;
+
+            const numStars = 100;
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.width = star.style.height = `${Math.random() * 3 + 1}px`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                fullscreenClockOverlay.appendChild(star);
+            }
+            starsGenerated = true;
+        }
+
+        toggleFullscreenClockBtn.addEventListener('click', () => {
+            if (fullscreenClockOverlay.classList.contains('active')) {
+                fullscreenClockOverlay.classList.remove('active');
+                toggleFullscreenClockBtn.textContent = 'Clock';
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                }
+            } else {
+                fullscreenClockOverlay.classList.add('active');
+                toggleFullscreenClockBtn.textContent = 'Exit Clock';
+                generateStars();
+                updateClock();
+                if (fullscreenClockOverlay.requestFullscreen) {
+                    fullscreenClockOverlay.requestFullscreen();
+                } else if (fullscreenClockOverlay.mozRequestFullScreen) {
+                    fullscreenClockOverlay.mozRequestFullScreen();
+                } else if (fullscreenClockOverlay.webkitRequestFullscreen) {
+                    fullscreenClockOverlay.webkitRequestFullscreen();
+                } else if (fullscreenClockOverlay.msRequestFullscreen) {
+                    fullscreenClockOverlay.msRequestFullscreen();
+                }
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && fullscreenClockOverlay.classList.contains('active')) {
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                }
+                fullscreenClockOverlay.classList.remove('active');
+                toggleFullscreenClockBtn.textContent = 'Clock';
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement && fullscreenClockOverlay.classList.contains('active')) {
+                fullscreenClockOverlay.classList.remove('active');
+                toggleFullscreenClockBtn.textContent = 'Clock';
+            }
+        });
+
+
+        // --- Reminder Functionality (Local Storage) ---
+        const REMINDERS_KEY = 'websiteReminders';
+
+        function loadReminders() {
+            const reminders = JSON.parse(localStorage.getItem(REMINDERS_KEY) || '[]');
+            remindersList.innerHTML = '';
+            reminders.forEach(reminderText => addReminderToList(reminderText, false));
+        }
+
+        function saveReminders() {
+            const reminders = [];
+            remindersList.querySelectorAll('li').forEach(li => {
+                reminders.push(li.firstChild.textContent.trim());
+            });
+            localStorage.setItem(REMINDERS_KEY, JSON.stringify(reminders));
+        }
+
+        function addReminderToList(text, save = true) {
+            if (!text.trim()) return;
+
+            const li = document.createElement('li');
+            li.textContent = text.trim();
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = '✕';
+            deleteBtn.addEventListener('click', () => {
+                li.remove();
+                saveReminders();
+            });
+
+            li.appendChild(deleteBtn);
+            remindersList.prepend(li);
+
+            if (save) {
+                saveReminders();
+            }
+        }
+
+        addReminderBtn.addEventListener('click', () => {
+            addReminderToList(reminderInput.value);
+            reminderInput.value = '';
+        });
+
+        reminderInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                addReminderToList(reminderInput.value);
+                reminderInput.value = '';
+            }
+        });
+
+        // --- About Page Functionality ---
+        showAboutPageBtn.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default anchor behavior
+            aboutPageOverlay.classList.add('active');
+            mainContent.style.display = 'none'; // Hide main content
+            // Ensure header/footer remain visible or adjust visibility as needed
+            document.querySelector('header').style.zIndex = '1001'; // Keep header above overlay
+            document.querySelector('footer').style.zIndex = '1001'; // Keep footer above overlay
+            body.style.overflow = 'hidden'; // Prevent scrolling on main page
+        });
+
+        closeAboutPageBtn.addEventListener('click', () => {
+            aboutPageOverlay.classList.remove('active');
+            mainContent.style.display = 'grid'; // Show main content again
+            document.querySelector('header').style.zIndex = '';
+            document.querySelector('footer').style.zIndex = '';
+            body.style.overflow = ''; // Restore scrolling
+        });
+
+
+        document.addEventListener('DOMContentLoaded', loadReminders);
+
+    </script>
+</body>
+</html>
